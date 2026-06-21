@@ -1,0 +1,98 @@
+{% from "macros.html.j2" import product_card, review_card %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ settings.meta_description }}">
+  <title>{{ settings.site_title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <section class="hero" id="top">
+      <div class="container">
+        <header class="site-header">
+          <a class="site-header__brand" href="#top">{{ settings.brand }}</a>
+          <div class="site-header__contacts">
+            <div class="contact contact--address">
+              <svg class="contact__icon" width="18" height="24" viewBox="0 0 18 24" aria-hidden="true"><path d="M9 23s7-7.1 7-14A7 7 0 1 0 2 9c0 6.9 7 14 7 14Z" fill="currentColor"/><circle cx="9" cy="9" r="2.6" fill="#081130"/></svg>
+              <span>{{ settings.address_line_1 }}<br>{{ settings.address_line_2 }}</span>
+            </div>
+            <a class="contact contact--phone" href="tel:{{ settings.phone_href }}">
+              <svg class="contact__icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.8 9.3 8 6.9 9.8c1.3 2.8 3.5 5 6.3 6.3l1.8-2.4 5.2 2.7-.7 4.3c-.2.9-1 1.5-1.9 1.5C9 21.7 2.3 15 1.8 6.4c0-.9.6-1.7 1.5-1.9l3.3-.7Z" fill="currentColor"/></svg>
+              <span><strong>{{ settings.phone_display }}</strong><small>{{ settings.work_hours }}</small></span>
+            </a>
+          </div>
+        </header>
+        <div class="hero__content">
+          <p class="eyebrow">{{ settings.hero_eyebrow }}</p>
+          <h1>{{ settings.hero_title }}</h1>
+          <p class="hero__description">{{ settings.hero_description }}</p>
+          <div class="hero__action"><a class="button button--large" href="#catalog">{{ settings.hero_button }}</a><span>{{ settings.hero_choice }}</span></div>
+        </div>
+      </div>
+      <div class="decor decor--hero-berry-left" aria-hidden="true"></div><div class="decor decor--hero-berry-bottom" aria-hidden="true"></div><div class="decor decor--hero-berry-right" aria-hidden="true"></div><div class="decor decor--hero-leaf" aria-hidden="true"></div>
+    </section>
+
+    <section class="catalog section-light" id="catalog">
+      <div class="container">
+        <h2 class="section-title">{{ settings.catalog_title }}</h2>
+        <div class="catalog__grid">{% for product in products %}{{ product_card(product) }}{% endfor %}</div>
+      </div>
+      <div class="decor decor--catalog-berry" aria-hidden="true"></div><div class="decor decor--catalog-leaf-right" aria-hidden="true"></div><div class="decor decor--catalog-leaf-left" aria-hidden="true"></div>
+    </section>
+
+    <section class="reviews" id="reviews">
+      <div class="container">
+        <h2 class="section-title section-title--light">{{ settings.reviews_title }}</h2>
+        <div class="reviews__viewport" data-reviews-slider>{% for review in reviews %}{{ review_card(review, loop.first) }}{% endfor %}</div>
+        <div class="reviews__controls" aria-label="Переключение отзывов">
+          <button class="round-button" type="button" data-review-prev aria-label="Предыдущий отзыв"><span class="chevron chevron--left" aria-hidden="true"></span></button>
+          <button class="round-button" type="button" data-review-next aria-label="Следующий отзыв"><span class="chevron chevron--right" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <div class="decor decor--reviews-leaf" aria-hidden="true"></div><div class="decor decor--reviews-berry" aria-hidden="true"></div>
+    </section>
+
+    <section class="gallery section-light" id="gallery">
+      <div class="container container--wide">
+        <header class="gallery__header"><h2 class="section-title">{{ settings.gallery_title }}</h2><p>{{ settings.gallery_subtitle }}</p></header>
+        <div class="gallery__grid">{% for image in gallery %}<img src="{{ image.image }}" alt="{{ image.alt }}">{% endfor %}</div>
+      </div>
+    </section>
+
+    <section class="order-form" id="order">
+      <div class="container">
+        <div class="order-form__panel">
+          <h2>{{ settings.form_title }}</h2><p>{{ settings.form_subtitle }}</p>
+          <form class="order-form__fields" data-order-form>
+            <label class="phone-field"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.8 9.3 8 6.9 9.8c1.3 2.8 3.5 5 6.3 6.3l1.8-2.4 5.2 2.7-.7 4.3c-.2.9-1 1.5-1.9 1.5C9 21.7 2.3 15 1.8 6.4c0-.9.6-1.7 1.5-1.9l3.3-.7Z" fill="currentColor"/></svg><input type="tel" name="phone" placeholder="{{ settings.form_phone_placeholder }}" autocomplete="tel"></label>
+            <input type="hidden" name="product" data-selected-product>
+            <button class="button order-form__button" type="submit">{{ settings.form_button }}</button>
+          </form>
+          <p class="form-message" data-form-message role="status" aria-live="polite"></p>
+          <label class="agreement"><input type="checkbox" checked><span>{{ settings.agreement_prefix }} <a href="#">{{ settings.agreement_link }}</a></span></label>
+        </div>
+      </div>
+      <div class="decor decor--form-leaf-top" aria-hidden="true"></div><div class="decor decor--form-berry-top" aria-hidden="true"></div><div class="decor decor--form-berry-bottom" aria-hidden="true"></div><div class="decor decor--form-leaf-bottom" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container"><nav class="site-footer__links" aria-label="Юридическая информация">{% for link in footer_links %}<a href="{{ link.href }}">{{ link.title }}</a>{% endfor %}</nav><p>{{ settings.copyright }}</p></div></footer>
+
+  <div class="review-modal" data-review-modal hidden>
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <button class="review-modal__close" type="button" data-review-close aria-label="Закрыть отзыв">×</button>
+      <h2 id="review-modal-title" data-modal-title></h2>
+      <p class="review-modal__author" data-modal-author></p>
+      <p class="review-modal__text" data-modal-text></p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

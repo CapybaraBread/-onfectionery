@@ -1,0 +1,28 @@
+{% macro product_card(product) -%}
+<article class="product-card">
+  <img class="product-card__image" src="{{ product.image }}" alt="{{ product.alt }}">
+  <div class="product-card__body">
+    <h3>{{ product.name }}</h3>
+    <p>{{ product.description }}</p>
+    <strong class="product-card__price">{{ product.price }}</strong>
+    <button class="button product-card__button" type="button" data-order-product="{{ product.name }}">{{ product.button_text }}</button>
+  </div>
+</article>
+{%- endmacro %}
+
+{% macro review_card(review, active=false) -%}
+<article class="review-card{% if active %} is-active{% endif %}" data-review-slide aria-hidden="{{ 'false' if active else 'true' }}">
+  <div class="review-card__content">
+    <span class="review-card__quote" aria-hidden="true">“</span>
+    <h3>{{ review.headline }}</h3>
+    <p>{{ review.preview_text }}</p>
+    <button class="review-card__more" type="button" data-review-open>Читать отзыв полностью</button>
+    <div class="review-card__full" data-review-full hidden>{{ review.full_text }}</div>
+  </div>
+  <div class="review-card__person">
+    <img src="{{ review.image }}" alt="{{ review.alt }}">
+    <strong>{{ review.name }}</strong>
+    <span>{{ review.city }}</span>
+  </div>
+</article>
+{%- endmacro %}
