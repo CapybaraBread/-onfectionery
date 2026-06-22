@@ -88,6 +88,7 @@ class SiteHandler(SimpleHTTPRequestHandler):
             headers={
                 "Authorization": "Bearer {}".format(api_key),
                 "Content-Type": "application/json",
+                "User-Agent": "SweetChestWebsite/1.0",
             },
             method="POST",
         )
