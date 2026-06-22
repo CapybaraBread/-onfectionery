@@ -172,12 +172,12 @@
         <div class="order-form__panel">
           <h2>Чтобы сделать заказ, укажите ваш телефон</h2><p>Мы перезвоним в течение 15 минут, чтобы уточнить ваши пожелания</p>
           <form class="order-form__fields" data-order-form>
-            <label class="phone-field"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.8 9.3 8 6.9 9.8c1.3 2.8 3.5 5 6.3 6.3l1.8-2.4 5.2 2.7-.7 4.3c-.2.9-1 1.5-1.9 1.5C9 21.7 2.3 15 1.8 6.4c0-.9.6-1.7 1.5-1.9l3.3-.7Z" fill="currentColor"/></svg><input type="tel" name="phone" placeholder="Номер телефона" autocomplete="tel"></label>
+            <label class="phone-field"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.8 9.3 8 6.9 9.8c1.3 2.8 3.5 5 6.3 6.3l1.8-2.4 5.2 2.7-.7 4.3c-.2.9-1 1.5-1.9 1.5C9 21.7 2.3 15 1.8 6.4c0-.9.6-1.7 1.5-1.9l3.3-.7Z" fill="currentColor"/></svg><input type="tel" name="phone" placeholder="Номер телефона" autocomplete="tel" required minlength="7" pattern="[+0-9 ()-]{7,25}"></label>
             <input type="hidden" name="product" data-selected-product>
-            <button class="button order-form__button" type="submit">Сделать заказ</button>
+            <button class="button order-form__button" type="submit" disabled>Сделать заказ</button>
+            <label class="agreement"><input type="checkbox" name="consent" value="yes" required><span>Нажимая на кнопку, вы соглашаетесь с <a href="#">условиями обработки персональных данных</a></span></label>
           </form>
           <p class="form-message" data-form-message role="status" aria-live="polite"></p>
-          <label class="agreement"><input type="checkbox" checked><span>Нажимая на кнопку, вы соглашаетесь с <a href="#">условиями обработки персональных данных</a></span></label>
         </div>
       </div>
       <div class="decor decor--form-leaf-top" aria-hidden="true"></div><div class="decor decor--form-berry-top" aria-hidden="true"></div><div class="decor decor--form-berry-bottom" aria-hidden="true"></div><div class="decor decor--form-leaf-bottom" aria-hidden="true"></div>

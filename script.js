@@ -88,9 +88,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.querySelector("[data-order-form]");
   const message = document.querySelector("[data-form-message]");
-  form?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    message.textContent = "Форма заполнена. Отправка на сервер в этой версии не подключена.";
-    message.classList.add("is-success");
-  });
+
+  if (form) {
+    const phone = form.elements.phone;
+    const consent = form.elements.consent;
+    const submitButton = form.querySelector("[type='submit']");
+
+    const updateButton = () => {
+      submitButton.disabled = !phone.validity.valid || !consent.checked;
+    };
+
+    phone.addEventListener("input", updateButton);
+    consent.addEventListener("change", updateButton);
+    updateButton();
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity() || submitButton.disabled) return;
+
+      submitButton.disabled = true;
+      message.textContent = "Отправляем заявку...";
+      message.classList.remove("is-success");
+
+      try {
+        const response = await fetch("/send-phone", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: phone.value,
+            consent: consent.checked,
+            product: selectedProduct?.value || "",
+          }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message);
+
+        message.textContent = result.message;
+        message.classList.add("is-success");
+        form.reset();
+      } catch (error) {
+        message.textContent = error.message || "Не удалось отправить заявку";
+      }
+
+      updateButton();
+    });
+  }
 });

@@ -1444,3 +1444,14 @@ body.modal-open {
     font-size: 22px;
   }
 }
+
+.order-form__fields .agreement {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+.order-form__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
