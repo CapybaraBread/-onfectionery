@@ -86,7 +86,11 @@ class SiteHandler(SimpleHTTPRequestHandler):
             with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
                 smtp.login(EMAIL, password)
                 smtp.send_message(message)
-        except (OSError, smtplib.SMTPException):
+        except (OSError, smtplib.SMTPException) as error:
+            print(
+                "Ошибка Gmail SMTP: {}: {}".format(type(error).__name__, error),
+                flush=True,
+            )
             self.send_json(502, {"ok": False, "message": "Не удалось отправить письмо. Попробуйте позже"})
             return
 
