@@ -14,7 +14,7 @@ def read_sheet(name):
 
 settings = {row["key"]: row["value"] for row in read_sheet("settings")}
 
-template = Environment(loader=FileSystemLoader("templates")).get_template("index.html.j2")
+template = Environment(loader=FileSystemLoader("templates")).get_template("index.html")
 html = template.render(
     settings=settings,
     products=read_sheet("products"),
