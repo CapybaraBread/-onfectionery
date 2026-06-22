@@ -33,41 +33,6 @@ with open("index.html", "w", encoding="utf-8") as file:
     file.write(html)
 
 
-def send_email(message, password):
-    errors = []
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
-            smtp.login(EMAIL, password)
-            smtp.send_message(message)
-        return
-    except (OSError, smtplib.SMTPException) as error:
-        errors.append(("465/SSL", error))
-
-    try:
-        with smtplib.SMTP("smtp.gmail.com", 587, timeout=15) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(EMAIL, password)
-            smtp.send_message(message)
-        return
-    except (OSError, smtplib.SMTPException) as error:
-        errors.append(("587/STARTTLS", error))
-
-    for connection, error in errors:
-        print(
-            "SMTP {} failed: {}: {}".format(
-                connection,
-                type(error).__name__,
-                error,
-            ),
-            flush=True,
-        )
-
-    raise errors[-1][1]
-
-
 class SiteHandler(SimpleHTTPRequestHandler):
     def send_json(self, status, data):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
@@ -100,7 +65,7 @@ class SiteHandler(SimpleHTTPRequestHandler):
             self.send_json(400, {"ok": False, "message": "Введите корректный номер телефона"})
             return
 
-        password = "".join(os.environ.get("GMAIL_APP_PASSWORD", "").split())
+        password = os.environ.get("GMAIL_APP_PASSWORD")
         if not password:
             self.send_json(503, {"ok": False, "message": "На сервере не настроена отправка почты"})
             return
@@ -118,7 +83,9 @@ class SiteHandler(SimpleHTTPRequestHandler):
         )
 
         try:
-            send_email(message, password)
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
+                smtp.login(EMAIL, password)
+                smtp.send_message(message)
         except (OSError, smtplib.SMTPException):
             self.send_json(502, {"ok": False, "message": "Не удалось отправить письмо. Попробуйте позже"})
             return
@@ -127,12 +94,11 @@ class SiteHandler(SimpleHTTPRequestHandler):
 
 
 print("index.html создан")
-port = int(os.environ.get("PORT", "8000"))
 try:
-    server = HTTPServer(("0.0.0.0", port), SiteHandler)
-    print("Сайт запущен на порту {}".format(port), flush=True)
+    server = HTTPServer(("0.0.0.0", 8000), SiteHandler)
+    print("Сайт запущен: http://127.0.0.1:8000")
     server.serve_forever()
 except OSError:
-    print("Порт {} уже занят или недоступен".format(port), flush=True)
+    print("Порт 8000 уже занят. Остановите старый сервер командой Ctrl+C")
 except KeyboardInterrupt:
     print("\nСервер остановлен")
