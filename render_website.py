@@ -1,10 +1,10 @@
 import json
 import os
 import re
-import smtplib
 from datetime import datetime
-from email.message import EmailMessage
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 from jinja2 import Environment, FileSystemLoader
 from openpyxl import load_workbook
@@ -65,32 +65,43 @@ class SiteHandler(SimpleHTTPRequestHandler):
             self.send_json(400, {"ok": False, "message": "Введите корректный номер телефона"})
             return
 
-        password = os.environ.get("GMAIL_APP_PASSWORD")
-        if not password:
+        api_key = os.environ.get("RESEND_API_KEY")
+        if not api_key:
             self.send_json(503, {"ok": False, "message": "На сервере не настроена отправка почты"})
             return
 
-        message = EmailMessage()
-        message["Subject"] = "Новая заявка с сайта Сладкий сундук"
-        message["From"] = EMAIL
-        message["To"] = EMAIL
-        message.set_content(
-            "Номер телефона: {}\nТовар: {}\nДата: {}".format(
-                phone,
-                product,
-                datetime.now().strftime("%d.%m.%Y %H:%M"),
-            )
+        email_data = json.dumps(
+            {
+                "from": "Сладкий сундук <onboarding@resend.dev>",
+                "to": [EMAIL],
+                "subject": "Новая заявка с сайта Сладкий сундук",
+                "text": "Номер телефона: {}\nТовар: {}\nДата: {}".format(
+                    phone,
+                    product,
+                    datetime.now().strftime("%d.%m.%Y %H:%M"),
+                ),
+            }
+        ).encode("utf-8")
+        request = Request(
+            "https://api.resend.com/emails",
+            data=email_data,
+            headers={
+                "Authorization": "Bearer {}".format(api_key),
+                "Content-Type": "application/json",
+            },
+            method="POST",
         )
 
         try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
-                smtp.login(EMAIL, password)
-                smtp.send_message(message)
-        except (OSError, smtplib.SMTPException) as error:
-            print(
-                "Ошибка Gmail SMTP: {}: {}".format(type(error).__name__, error),
-                flush=True,
-            )
+            with urlopen(request, timeout=15) as response:
+                response.read()
+        except HTTPError as error:
+            details = error.read().decode("utf-8", errors="replace")
+            print("Ошибка Resend API {}: {}".format(error.code, details), flush=True)
+            self.send_json(502, {"ok": False, "message": "Не удалось отправить письмо. Попробуйте позже"})
+            return
+        except (OSError, URLError) as error:
+            print("Ошибка подключения к Resend: {}".format(error), flush=True)
             self.send_json(502, {"ok": False, "message": "Не удалось отправить письмо. Попробуйте позже"})
             return
 

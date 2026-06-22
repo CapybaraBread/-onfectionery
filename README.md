@@ -16,17 +16,26 @@ python3 -m pip install -r requirements.txt
 
 ## Настройка отправки писем
 
-Заявки отправляются на `denis05102012@gmail.com` через Gmail SMTP.
+Render не предоставляет доступ к Gmail SMTP в текущей среде, поэтому заявки
+отправляются через HTTPS API сервиса Resend.
 
-1. Включите двухэтапную аутентификацию Google.
-2. Создайте пароль приложения: <https://myaccount.google.com/apppasswords>
-3. Перед запуском задайте пароль приложения в терминале без пробелов:
+1. Зарегистрируйтесь на <https://resend.com> с адресом `denis05102012@gmail.com`.
+2. Создайте API-ключ в разделе API Keys.
+3. Локально задайте ключ перед запуском:
 
 ```bash
-export GMAIL_APP_PASSWORD="ваш_16_значный_пароль_приложения"
+export RESEND_API_KEY="re_ваш_ключ"
 ```
 
-Пароль нельзя записывать в Python, README или загружать на GitHub.
+4. На Render добавьте Environment Variable:
+
+```text
+RESEND_API_KEY=re_ваш_ключ
+```
+
+После сохранения переменной выполните новый deploy. Секретный ключ нельзя
+записывать в Python, README или загружать на GitHub. Старую переменную
+`GMAIL_APP_PASSWORD` можно удалить.
 
 ## Запуск
 
@@ -58,4 +67,4 @@ python3 render_website.py
 
 ## Важно
 
-Отправка писем не будет работать при простом открытии `index.html` или публикации только на GitHub Pages. Нужен запущенный `render_website.py` на сервере с переменной `GMAIL_APP_PASSWORD`.
+Отправка писем не будет работать при простом открытии `index.html` или публикации только на GitHub Pages. Нужен запущенный `render_website.py` на сервере с переменной `RESEND_API_KEY`.
